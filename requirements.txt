@@ -5,6 +5,7 @@ colorama==0.4.4
 Flask==2.0.1
 Flask-SQLAlchemy==2.5.1
 Flask-Cors==3.0.10
+Flask-Bcrypt==0.7.1
 greenlet==1.1.0
 gunicorn==20.1.0
 itsdangerous==2.0.1
