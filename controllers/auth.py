@@ -9,8 +9,6 @@ from flask import jsonify
 
 # Funcion de registro de nuevo usuario
 def register(request):
-
-    resp = {}
     
     if (request.form['username'] and request.form['email'] and request.form['password']):
         ExistEmail = db.session.query(User).filter_by(email=request.form['email']).all()
@@ -38,7 +36,7 @@ def register(request):
         return jsonify({"status": 400, "mensaje": "Por favor ingrese todos los datos"}), 400
 
 # Login de usuario
-def login(request):
+def login(request, session):
     
     if (request.form['user'] and request.form['password']):
         
@@ -49,6 +47,9 @@ def login(request):
 
         if user and user.verificarPassword(request.form['password']):
             
+            # Establecer id del usuario en la sesión
+            session['idUser'] = user.id
+
             return jsonify({"status": 200, "mensaje": "Login exitoso"}), 200
 
         else:
