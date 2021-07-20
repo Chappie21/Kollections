@@ -1,7 +1,9 @@
 from datetime import datetime
 from os import error
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects import postgresql
 import bcrypt
+from sqlalchemy.orm import backref, relationship
 from sqlalchemy.sql.schema import ForeignKey
 
 db = SQLAlchemy()
@@ -19,7 +21,7 @@ class User(db.Model):
     password = db.Column(db.Text())
     profileImg = db.Column(db.Text())
     descripcion = db.Column(db.String(120))
-    collections = db.relationship('Collection') # Relacion con la entidad Colecciones
+    collections = db.relationship('Collection', backref = "User", passive_deletes = 'all') # Relacion con la entidad Colecciones
 
     # Constructor
     """
@@ -51,12 +53,11 @@ class Collection(db.Model):
 
     # Atributos del modelo
     id = db.Column(db.Integer, primary_key = True)
-    user = db.Column(db.Integer, db.ForeignKey('Usuarios.id'))
+    user = db.Column(db.Integer, db.ForeignKey('Usuarios.id', ondelete = 'CASCADE'))
     name = db.Column(db.String(50))
     portada = db.Column(db.Text())
     create_date = db.Column(db.DateTime, default = datetime.now())
-    imagenes = db.relationship('Images') # Relacion con la entidad Colecciones
-
+    imagenes = db.relationship('Images', backref = "Collection", passive_deletes = 'all') # Relacion con la entidad Colecciones
 
     def __init__(self, user, name, portada = None):
 
@@ -72,14 +73,15 @@ class Images(db.Model):
 
     # Atributos del modelo
     id = db.Column(db.Integer, primary_key = True)
-    collection = db.Column(db.Integer, db.ForeignKey('Colecciones.id'))
+    collection = db.Column(db.Integer, db.ForeignKey('Colecciones.id', ondelete = 'CASCADE'))
     descripccion = db.Column(db.Text())
     urlImg = db.Column(db.Text())
-    tag = db.Column(db.String(100))
+    tags = db.Column(postgresql.ARRAY(postgresql.TEXT))
     add_date = db.Column(db.DateTime, default = datetime.now())
 
-    def __init__(self, collection, descripccion, urlImg):
+    def __init__(self, collection, descripccion, urlImg, tags):
 
         self.collection = collection
         self.descripccion = descripccion
         self.urlImg = urlImg
+        self.tags = tags

@@ -2,6 +2,7 @@
     Este script define controladores de peticiones, para acciones referentes
     a el usuario, obtenecion de datos de usuario y busqueda de perfiles
 """
+import sqlalchemy
 from model.models import *
 from sqlalchemy import or_
 from model.models import db
@@ -13,7 +14,7 @@ from helpers.uploadImgs import *
 
 # Edicion de informacion basica del usuario
 def editBasicInfo(request, idSession):
-    
+
     user = User.query.get(idSession)
 
     # En caso de no existir el usuario, por eliminacion previa
@@ -22,19 +23,36 @@ def editBasicInfo(request, idSession):
     
     # En caso de modificacion de datos basicos
     if request.form['username'] != '':
-        user.username = request.form['username']
+
+        exist = db.session.query(User).filter(User.username == request.form['username']).first()
+
+        # En caso de que el correo ingresado sea el mismo ya colocado, no hará nada
+        if(user.username != request.form['username']):
+            if exist is None:
+                user.username = request.form['username']
+            else:
+                return jsonify({"status": 400, "mensaje": "Nombre de usuario ya existente", "input": "username"}), 400
     
     if request.form['email'] != '':
-        user.email = request.form['email']
+
+        exist = db.session.query(User).filter(User.email == request.form['email']).first()
+        
+        # En caso de que el correo ingresado sea el mismo ya colocado, no hará nada
+        if(user.email != request.form['email']):
+            # En caso de que el nuevo correo ya este en uso por otro usuario dará mensaje de error
+            if exist is None:
+                 user.email = request.form['email']
+            else:
+                return jsonify({"status": 400, "mensaje": "Correo ya en uso", "input": "email"}), 400
 
     if request.form['descripcion'] != '':
         user.descripcion = request.form['descripcion']
 
     # En caso de modificar o cambiar foto de perfil
-    if request.files['profile'].filename != '':
+    if request.files['profileImg'].filename != '':
 
-        if(allowedFileType(request.files['profile'].filename)):
-            url = uploadProfile(request.files['profile'])
+        if(allowedFileType(request.files['profileImg'].filename)):
+            url = uploadProfile(request.files['profileImg'])
 
             if(url == ''):
                 return jsonify({"status": 500, "mensaje": "Error al almacenar archivo"}), 500
@@ -70,6 +88,17 @@ def changePassword(request, idSession):
         return jsonify({"status": 400, "mensaje": "Usuario no existente"}), 400
 
 
+def deleteUser(session):
+    
+    try:
+        db.session.query(User).filter(User.id == session['idUser']).delete()
+        db.session.commit() # Confirmar cambios
+        session.clear() # Eliminar sesión
+        return jsonify({"status": 200, "mensaje": "Cuenta eliminada con exito"}), 200
+    except sqlalchemy:
+        print('Error al eliminar cuenta de usuario: ' + sqlalchemy)
+        return jsonify({"status": 500, "mensaje": "Error al eliminar cuenta del usuario"}), 500 
+
 #############################################################################################
 
 # Obtener data del usuario
@@ -81,8 +110,10 @@ def getDataUser(idUser, idSession):
 
     if user:
 
-        collections = db.session.query(User, Collection).join(User, User.id == Collection.id)
+        collections = db.session.query(Collection).filter(Collection.user == idUser)
         
+        print(collections)
+
         for coleccion in collections:
             collects.append({
                 "id": coleccion.id,
