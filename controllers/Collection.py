@@ -1,6 +1,5 @@
 import sqlalchemy
 from model.models import *
-from sqlalchemy import or_
 from model.models import db
 from flask import jsonify
 
@@ -31,3 +30,20 @@ def addCollection(request, idUser):
     except error:
         print("Error al crear nueva coleccion para el usuario: {} \n error: {}".format(idUser, error) )
         return jsonify({"status": 500, "mensaje": "Collecion creada"}), 500
+
+# Eliminar una coleccion
+def deleteCollection(idColeccion, idUser):
+    
+    # Obtener coleccion
+    coleccion = Collection.query.get(idColeccion)
+
+    if coleccion is not None:
+        # Comprobar que la coleccion pertenezca a dicho usuario
+        if(idUser == coleccion.user):
+            db.session.query(Collection).filter(Collection.id == idColeccion).delete()
+            db.session.commit()
+            return jsonify({"status": 200, "mensjae": "Coleccion eliminada con exito"}), 200
+        else:
+            return jsonify({"status": 400, "mensjae": "La coleccion no le pertenece"}), 400
+    else:
+        return jsonify({"status": 400, "mensjae": "La coleccion no existente"}), 400

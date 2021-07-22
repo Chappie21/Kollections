@@ -10,8 +10,8 @@ archivos = ['png', 'jpg', 'jpeg', 'gif', 'svg']
 # Crea un directorio para guardar imagenes en caso de no existir
 def addDirect():
     
-    if(not os.path.exists(os.getcwd() + "/img")):
-        os.mkdir(os.getcwd() + "/img")
+    if(not os.path.exists(os.getcwd() + "/public/img")):
+        os.mkdir(os.getcwd() + "/public/img")
 
 # Cargar o guardar archivo
 def uploadProfile(file):
@@ -20,8 +20,8 @@ def uploadProfile(file):
 
     try:
 
-        file.save(os.getcwd() + "/img/" + secure_filename(file.filename))
-        return os.getcwd() + "/img/" + secure_filename(file.filename)
+        file.save("public/img/" + secure_filename(file.filename))
+        return "https://collage-collections.herokuapp.com/img/" + secure_filename(file.filename)
 
     except FileNotFoundError:
         print("Error al almacenar fichero")

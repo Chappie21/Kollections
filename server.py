@@ -8,6 +8,7 @@ from model.models import db
 from controllers.auth import *
 from controllers.user import *
 from controllers.Collection import *
+from controllers.Image import *
 
 # Instancia de aplicacion en Flask
 app = Flask(__name__, static_folder = 'public/', static_url_path='/')
@@ -73,11 +74,23 @@ def modifPassword():
 
 ########################################### Collections ####################################
 
-@app.route('/createCollection', methods = ['POST', 'DELETE'])
-def creatCollection():
-    
+@app.route('/Collection', methods = ['POST', 'DELETE'])
+def Collection():
+
     if request.method == 'POST':
         return addCollection(request, session['idUser'])
+    if request.method == 'DELETE':
+        return deleteCollection(request.get_json()['idColeccion'], session['idUser'])
+
+############################################################################################
+
+########################################### Imagenes #######################################
+@app.route('/Images', methods = ['POST', 'DELETE'])
+def Images():
+    print("si")
+    if request.method == 'POST':
+        return addImage(request, session['idUser'])
+
 
 ############################################################################################
 
