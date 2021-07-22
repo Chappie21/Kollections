@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 
 # Archivos admitidos
 archivos = ['png', 'jpg', 'jpeg', 'gif', 'svg']
+links = ['https://collage-collections.herokuapp.com/', 'http://localhost:5000/']
 
 # Crea un directorio para guardar imagenes en caso de no existir
 def addDirect():
@@ -21,7 +22,7 @@ def uploadProfile(file):
     try:
 
         file.save("public/img/" + secure_filename(file.filename))
-        return "https://collage-collections.herokuapp.com/img/" + secure_filename(file.filename)
+        return links[0] + "img/" + secure_filename(file.filename)
 
     except FileNotFoundError:
         print("Error al almacenar fichero")
