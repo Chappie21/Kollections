@@ -5,6 +5,7 @@ from flask import jsonify
 
 from helpers.uploadImgs import *
 from model.models import Collection
+from model.models import Images
 
 # Crear nueva coleccion
 def addCollection(request, idUser):
@@ -47,3 +48,25 @@ def deleteCollection(idColeccion, idUser):
             return jsonify({"status": 400, "mensjae": "La coleccion no le pertenece"}), 400
     else:
         return jsonify({"status": 400, "mensjae": "La coleccion no existente"}), 400
+
+# Obtener imagenes de una coleccion
+def getImgCol(idColeccion):
+
+    Imagenes = db.session.query(Images).filter(Images.collection == idColeccion)
+
+    if Imagenes is not None:
+        
+        resp = []
+
+        for img in Imagenes:
+            resp.append({
+                "id": img.id,
+                "descripccion": img.descripccion,
+                "urlImg": img.urlImg,
+                "tags": img.tags
+            })
+
+        return jsonify({"status": 200, "mensjae": "Imagenes obtenidas", "imgs": resp}), 200
+
+    else:
+        return jsonify({"status": 400, "mensaje": "coleccion no existente"}), 400

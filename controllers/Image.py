@@ -4,7 +4,7 @@ from model.models import db
 from flask import jsonify
 
 from helpers.uploadImgs import *
-from model.models import Collection, Images
+from model.models import *
 
 def addImage(request, idUser):
 
@@ -43,3 +43,23 @@ def addImage(request, idUser):
             return jsonify({"status": 400, "mensaje": "coleccion no existente"}), 400
     else:
          return jsonify({"status": 400, "mensaje": "No se ha enviado algun archivo del tipo imagen"}), 400
+
+def getImages(idUser):
+    
+    publicaciones = db.session.query(User.username, User.profileImg, Images.descripccion, Images.urlImg, Images.tags).filter(
+        Images.collection == Collection.id).filter(Collection.user == User.id).filter(
+            User.id != idUser
+        ).all()
+    
+    respHome = []
+
+    for pub in publicaciones:
+        respHome.append({
+            "username": pub[0],
+            "profileImg": pub[1],
+            "descripccion": pub[2],
+            "pubUrl": pub[3],
+            "tags": pub[4]
+        })
+
+    return jsonify({"status": 200, "publicaciones": respHome}), 200

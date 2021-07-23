@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, redirect
 from flask import session
 from flask_cors import CORS
 from werkzeug.utils import send_from_directory
@@ -17,9 +17,9 @@ app.config.from_object(DevelopmentConfig)
 CORS(app)
 
 # Enviar html statico en caso de realziar una peticion en la barra de navegacion del navegador
-@app.errorhandler(404)
-def not_found(e):
-    return app.send_static_file('index.html')
+# @app.errorhandler(404)
+# def not_found(e):
+#     return app.send_static_file('index.html')
 
 # Enviar html statico que contiene todas las funcionalidades de la pagina
 @app.route('/')
@@ -51,6 +51,11 @@ def registro():
 def IniciarSesion():
     return login(request, session)
 
+@app.route('/logOut', methods = ['GET'])
+def logOut():
+    session.clear()
+    return jsonify({"status": 200, "mensaje": "sesion cerrada"}), 200
+
 ############################################################################################
 
 ########################################### USER ###########################################
@@ -79,18 +84,25 @@ def Collection():
 
     if request.method == 'POST':
         return addCollection(request, session['idUser'])
+
     if request.method == 'DELETE':
         return deleteCollection(request.get_json()['idColeccion'], session['idUser'])
+
+@app.route('/getCollection/<int:id>', methods = ['GET'])
+def getCollection(id):
+    return getImgCol(id)
 
 ############################################################################################
 
 ########################################### Imagenes #######################################
 @app.route('/Images', methods = ['POST', 'DELETE'])
 def Images():
-    print("si")
     if request.method == 'POST':
         return addImage(request, session['idUser'])
 
+@app.route('/getImages', methods = ['GET'])
+def Homepage():
+    return getImages(session['idUser'])
 
 ############################################################################################
 
