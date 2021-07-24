@@ -44,8 +44,10 @@ def addImage(request, idUser):
     else:
          return jsonify({"status": 400, "mensaje": "No se ha enviado algun archivo del tipo imagen"}), 400
 
+# Obtener imagenes para pagina de inicio, (todas aquellas que sean de otros usuarios)
 def getImages(idUser):
     
+    # Encontrar todas las publicaciones o imagenes que no pertenezcan al usuario
     publicaciones = db.session.query(User.username, User.profileImg, Images.descripccion, Images.urlImg, Images.tags).filter(
         Images.collection == Collection.id).filter(Collection.user == User.id).filter(
             User.id != idUser
@@ -63,3 +65,30 @@ def getImages(idUser):
         })
 
     return jsonify({"status": 200, "publicaciones": respHome}), 200
+
+# Buscar imagenes por medio de tagnames
+def searchImage_byTag(tag):
+
+    # la consulta busca todas las publicaciones en donde "tag" se encuentre en el arreglo tags
+    publicaciones = db.session.query(User.username, User.profileImg, Images.descripccion, Images.urlImg, Images.tags).filter(
+        Images.collection == Collection.id).filter(Collection.user == User.id).all()
+    
+    # Comprobar si se han encotrado publicaciones
+    if publicaciones is not None:
+        respHome = []
+
+        for pub in publicaciones:
+           if tag in pub.tags:
+                respHome.append({
+                    "username": pub[0],
+                    "profileImg": pub[1],
+                    "descripccion": pub[2],
+                    "pubUrl": pub[3],
+                    "tags": pub[4]
+                })
+
+        return jsonify({"status": 200, "publicaciones": respHome}), 200
+
+    else:
+        # En caso de no encotrar publicaciones
+        return jsonify({"status": 400, "mesnaje": "no se encontraron publicacion con dicho tag"}), 400

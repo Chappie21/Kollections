@@ -17,9 +17,10 @@ app.config.from_object(DevelopmentConfig)
 CORS(app)
 
 # Enviar html statico en caso de realziar una peticion en la barra de navegacion del navegador
-# @app.errorhandler(404)
-# def not_found(e):
-#     return app.send_static_file('index.html')
+@app.errorhandler(404)
+def not_found(e):
+    print(request.path)
+    return app.send_static_file('index.html')
 
 # Enviar html statico que contiene todas las funcionalidades de la pagina
 @app.route('/')
@@ -91,10 +92,12 @@ def Collection():
 @app.route('/getCollection/<int:id>', methods = ['GET'])
 def getCollection(id):
     return getImgCol(id)
+    
 
 ############################################################################################
 
 ########################################### Imagenes #######################################
+
 @app.route('/Images', methods = ['POST', 'DELETE'])
 def Images():
     if request.method == 'POST':
@@ -103,6 +106,10 @@ def Images():
 @app.route('/getImages', methods = ['GET'])
 def Homepage():
     return getImages(session['idUser'])
+
+@app.route('/searchImages/<string:tag>', methods = ['GET'])
+def Search(tag):
+    return searchImage_byTag(tag)
 
 ############################################################################################
 
