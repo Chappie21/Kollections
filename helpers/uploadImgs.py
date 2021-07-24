@@ -22,7 +22,7 @@ def uploadProfile(file):
     try:
 
         file.save("public/img/" + secure_filename(file.filename))
-        return links[1] + "img/" + secure_filename(file.filename)
+        return links[0] + "img/" + secure_filename(file.filename)
 
     except FileNotFoundError:
         print("Error al almacenar fichero")
