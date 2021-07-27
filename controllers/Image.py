@@ -92,3 +92,25 @@ def searchImage_byTag(tag):
     else:
         # En caso de no encotrar publicaciones
         return jsonify({"status": 400, "mesnaje": "no se encontraron publicacion con dicho tag"}), 400
+
+# Eliminar una imagen dada
+def EliminateImg(idImg, idUser):
+    
+     # Obtener coleccion
+    Imagen = Images.query.get(idImg)
+
+    if Imagen is not None:
+        # Comprobar que la imagen pertenezca a dicho usuario
+
+        # Obtener coleccion propietario
+        coleccion = db.session.query(Collection.user).filter(
+        Images.collection == Imagen.collection).filter(Collection.id == Imagen.collection).first()
+
+        if(idUser == coleccion.user):
+            db.session.query(Images).filter(Images.id == idImg).delete()
+            db.session.commit()
+            return jsonify({"status": 200, "mensjae": "Imagen eliminada con exito"}), 200
+        else:
+            return jsonify({"status": 400, "mensjae": "La imagen no le pertenece"}), 400
+    else:
+        return jsonify({"status": 400, "mensjae": "La imagen no existe"}), 400

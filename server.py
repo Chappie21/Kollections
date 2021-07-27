@@ -12,7 +12,7 @@ from controllers.Image import *
 
 # Instancia de aplicacion en Flask
 app = Flask(__name__, static_folder = 'public/', static_url_path='/')
-app.config.from_object(DevelopmentConfig)
+app.config.from_object(ProductionConfig)
 
 CORS(app)
 
@@ -57,6 +57,15 @@ def logOut():
     session.clear()
     return jsonify({"status": 200, "mensaje": "sesion cerrada"}), 200
 
+# Comprobar que el usuario este logueado
+@app.route('/isLogin', methods = ['GET'])
+def isLogin():
+
+    if(session['idUser'] is not None):
+        return jsonify({"status": 200}), 200
+    else:
+         return jsonify({"status": 400}), 400
+         
 ############################################################################################
 
 ########################################### USER ###########################################
@@ -100,8 +109,13 @@ def getCollection(id):
 
 @app.route('/Images', methods = ['POST', 'DELETE'])
 def Images():
+
+    print(request.get_json())
+
     if request.method == 'POST':
         return addImage(request, session['idUser'])
+    if request.method == 'DELETE':
+        return EliminateImg(request.get_json()['idImg'],  session['idUser'])
 
 @app.route('/getImages', methods = ['GET'])
 def Homepage():
