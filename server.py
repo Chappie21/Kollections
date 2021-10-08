@@ -12,7 +12,7 @@ from controllers.Image import *
 
 # Instancia de aplicacion en Flask
 app = Flask(__name__, static_folder = 'public/', static_url_path='/')
-app.config.from_object(ProductionConfig)
+app.config.from_object(DevelopmentConfig)
 
 CORS(app)
 
