@@ -50,7 +50,7 @@ def login(request, session):
             # Establecer id del usuario en la sesión
             session['idUser'] = user.id
 
-            return jsonify({"status": 200, "mensaje": "Login exitoso"}), 200
+            return jsonify({"status": 200, "mensaje": "Login exitoso", "userId": user.id}), 200
 
         else:
 
