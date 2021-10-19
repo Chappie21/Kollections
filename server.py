@@ -66,6 +66,12 @@ def isLogin():
     else:
          return jsonify({"status": 400}), 400
          
+# Registrar tutorial como visto
+@app.route('/quitTutorial', methods = ['POST'])
+def eliminateTutorial():
+    return QuitTutorial(session['idUser'])
+
+
 ############################################################################################
 
 ########################################### USER ###########################################

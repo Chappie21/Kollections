@@ -22,6 +22,7 @@ class User(db.Model):
     profileImg = db.Column(db.Text())
     descripcion = db.Column(db.String(120))
     collections = db.relationship('Collection', backref = "User", passive_deletes = 'all') # Relacion con la entidad Colecciones
+    tutorial = db.Column(db.Boolean, default = False)
 
     # Constructor
     """

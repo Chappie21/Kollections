@@ -50,11 +50,27 @@ def login(request, session):
             # Establecer id del usuario en la sesión
             session['idUser'] = user.id
 
-            return jsonify({"status": 200, "mensaje": "Login exitoso", "userId": user.id}), 200
+            if not user.tutorial:
+                
+                    return jsonify({"status": 200, "mensaje": "Login exitoso", "userId": user.id, "tutorial": 'mostrar'}), 200
+            else:
 
+                    return jsonify({"status": 200, "mensaje": "Login exitoso", "userId": user.id, "tutorial": 'no mostrar'}), 200
         else:
 
             return jsonify({"status": 400, "mensaje": "Credenciales incrrectas"}), 400
 
     else:
         return jsonify({"status": 400, "mensaje": "Por favor ingrese todas las credenciales"}), 400
+
+
+# Quitar tutorial al usuario
+def QuitTutorial(idUser):
+
+    # Obtener el usuario de la sesión
+    user = db.session.query(User).filter_by(id=idUser).first()
+    user.tutorial = True
+
+    db.session.commit() #Confirmar cambios
+
+    return  jsonify({"status": 200, "mensaje": "Tutorial completado"}), 200
