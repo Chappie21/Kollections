@@ -1,16 +1,2 @@
 # Carpeta contenedora de imagenes
 img
-
-# Archivos de frontend
-/Frontend-React/node_modules
-/Frontend-React/build
-
-/Frontend-React/.DS_Store
-/Frontend-React/.env.local
-/Frontend-React/.env.development.local
-/Frontend-React/.env.test.local
-/Frontend-React/.env.production.local
-
-/Frontend-React/npm-debug.log*
-/Frontend-React/yarn-debug.log*
-/Frontend-React/yarn-error.log*
