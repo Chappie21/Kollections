@@ -1,10 +1,13 @@
 from datetime import datetime
+from email.policy import default
 from os import error
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects import postgresql
 import bcrypt
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy.sql.schema import ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
 db = SQLAlchemy()
 
@@ -15,7 +18,7 @@ class User(db.Model):
     __tablename__ = 'Usuarios'
 
     # Atributos del modelo
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(UUID(as_uuid=True), primary_key = True, default=uuid.uuid4())
     username = db.Column(db.String(50), unique = True)
     email = db.Column(db.String(50), unique = True)
     password = db.Column(db.Text())
@@ -53,8 +56,8 @@ class Collection(db.Model):
     __tablename__ = 'Colecciones'
 
     # Atributos del modelo
-    id = db.Column(db.Integer, primary_key = True)
-    user = db.Column(db.Integer, db.ForeignKey('Usuarios.id', ondelete = 'CASCADE'))
+    id = db.Column(UUID(as_uuid=True), primary_key = True, default=uuid.uuid4())
+    user = db.Column(UUID(as_uuid=True), db.ForeignKey('Usuarios.id', ondelete = 'CASCADE'))
     name = db.Column(db.String(50))
     portada = db.Column(db.Text())
     create_date = db.Column(db.DateTime, default = datetime.now())
@@ -73,8 +76,8 @@ class Images(db.Model):
     __tablename__ = 'Imagenes'
 
     # Atributos del modelo
-    id = db.Column(db.Integer, primary_key = True)
-    collection = db.Column(db.Integer, db.ForeignKey('Colecciones.id', ondelete = 'CASCADE'))
+    id = db.Column(UUID(as_uuid=True), primary_key = True, default=uuid.uuid4())
+    collection = db.Column(UUID(as_uuid=True), db.ForeignKey('Colecciones.id', ondelete = 'CASCADE'))
     descripccion = db.Column(db.Text())
     urlImg = db.Column(db.Text())
     tags = db.Column(postgresql.ARRAY(postgresql.TEXT))
