@@ -10,12 +10,13 @@ from controllers.user import *
 from controllers.Collection import *
 from controllers.Image import *
 
+from helpers.uploadImgs import loadCloudinaryConfig
+
 # Instancia de aplicacion en Flask
 app = Flask(__name__, static_folder = 'public/', static_url_path='/')
 app.config.from_object(DevelopmentConfig)
 
 CORS(app)
-
 # Enviar html statico en caso de realziar una peticion en la barra de navegacion del navegador
 @app.errorhandler(404)
 def not_found(e):
@@ -139,6 +140,9 @@ db.init_app(app)
 if __name__ == '__main__':
 
     with app.app_context():
+        # Carcar configuracion de cloudinary
+        loadCloudinaryConfig(app.config['CLOUD_NAME'], app.config['CLOUD_API_KEY'], app.config['CLOUD_API_SECRET'])
+        # Cerar BD
         db.create_all()
     
     app.run()

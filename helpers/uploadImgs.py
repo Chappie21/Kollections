@@ -2,30 +2,38 @@
     Se definenen funciones para el manejo de ficheros (imagenes)
 """
 import os
+import cloudinary
+import cloudinary.uploader as uploader
+import cloudinary.api
+import uuid
 from werkzeug.utils import secure_filename
 
 # Archivos admitidos
 archivos = ['png', 'jpg', 'jpeg', 'gif', 'svg']
 links = ['https://collage-collections.herokuapp.com/', 'http://localhost:5000/']
 
-# Crea un directorio para guardar imagenes en caso de no existir
-def addDirect():
-    
-    if(not os.path.exists(os.getcwd() + "/public/img")):
-        os.mkdir(os.getcwd() + "/public/img")
+# Cargar configuracion de Cloudinary
+def loadCloudinaryConfig(cloud_name, api_key, api_secret):
+    cloudinary.config(
+        cloud_name=cloud_name,
+        api_key=api_key,
+        api_secret=api_secret
+    )
 
 # Cargar o guardar archivo
-def uploadProfile(file):
-
-    addDirect()
-
+def uploadProfile(file, userId):
     try:
+        response = uploader.upload(
+            file,
+            folder = f'Kollections/{userId}/', 
+            public_id = f'{uuid.uuid4()}',
+            overwrite = True,
+            resource_type = "image"
+        )
 
-        file.save("public/img/" + secure_filename(file.filename))
-        return links[1] + "img/" + secure_filename(file.filename)
-
-    except FileNotFoundError:
-        print("Error al almacenar fichero")
+        return response.get('secure_url')
+    except Exception as error:
+        print(error)
         return ''
 
 # Confirmar tipo de archivo

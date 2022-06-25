@@ -15,6 +15,9 @@ class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    CLOUD_NAME=os.getenv('CLOUD_NAME')
+    CLOUD_API_KEY=os.getenv('CLOUD_API_KEY')
+    CLOUD_API_SECRET=os.getenv('CLOUD_API_SECRET')
 
 # Configuracion de produccion 
 class ProductionConfig(Config):
