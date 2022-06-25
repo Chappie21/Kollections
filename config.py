@@ -5,11 +5,15 @@
     El micro framework de flask es capaz de leer este.
 """
 import os
+from dotenv import load_dotenv
+
+# Cargar variables de entorno
+load_dotenv()
 
 class Config(object):
     # SECRET_KEY = os.urandom(24)
-    SECRET_KEY = 'un_valor_random'
-    SQLALCHEMY_DATABASE_URI = 'postgresql://biqpnxyiyjiaht:42e3ecd725496c9e9e8d83175402b1b937b0ed40218eec60cc95fdbe842e90e1@ec2-34-198-31-223.compute-1.amazonaws.com:5432/d5q4v32k2hp3je'
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Configuracion de produccion 
