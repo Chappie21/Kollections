@@ -17,7 +17,7 @@ def addImage(request, idUser):
                 
                 try:
                     if(allowedFileType(request.files['image'].filename)):
-                        url = uploadProfile(request.files['image'])
+                        url = uploadProfile(request.files['image'], idUser)
 
                         newImage = Images(
                             collection = request.form['idCollecion'],

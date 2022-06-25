@@ -1,2 +1,5 @@
 # Carpeta contenedora de imagenes
 img
+venv
+__pycache__
+.env
